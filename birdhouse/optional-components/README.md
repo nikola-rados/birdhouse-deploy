@@ -129,3 +129,12 @@ How to enable in `env.local` (a copy from
 * Add `./optional-components/all-public-access` to `EXTRA_CONF_DIRS`.
 
 The anonymous user will now have all the permissions described in [`./optional-components/all-public-access/all-public-access-magpie-permission.cfg`](all-public-access/all-public-access-magpie-permission.cfg).
+
+# Development
+
+When using templates files in optional components configuration files (such as a conf.extra-service.d/opnallll-component.conf)
+one must first explicitely add any environment variable they want to use in birdhouse/pavics-compose.sh in either VARS 
+or OPTIONAL_VARS.
+
+The variable names added to VARS will be checked against the resulting environment of env.local + any optional components
+environment files. Any variable added to VARS from an optional component must also be added to that component's default.env file.
