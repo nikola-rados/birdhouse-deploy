@@ -2,7 +2,7 @@
 
 ## Monitor all components in Canarie node, both public and internal url
 
-So that the url https://<PAVICS_FQDN>/canarie/node/service/stats also return
+So that the url `https://<PAVICS_FQDN>/canarie/node/service/stats` also return
 what the end user really see (a component might work but is not accessible to
 the end user).
 
@@ -13,6 +13,25 @@ How to enable this config in `env.local` (a copy from
 [`env.local.example`](../env.local.example)):
 
 * Add `./optional-components/canarie-api-full-monitoring` to `EXTRA_CONF_DIRS`.
+
+
+## Database external ports
+
+In order to grant access to databases defined by containers `postgres`, `postgres-magpie` and `mongodb`, it is possible
+to extend the `docker-compose` configuration. By default, their connection ports will not be exposed externally for 
+security purpose. Only other containers in the stack can connect to them using the `links` definitions. It is only 
+recommended to expose ports in this manner for test instances where debugging becomes easier with direct access to 
+live data in the databases. 
+
+How to enable database external ports in `env.local` (a copy from
+[`env.local.example`](../env.local.example)):
+
+* Add `./optional-components/database-external-ports` to `EXTRA_CONF_DIRS`.
+
+The databases will then be accessible remotely with ports defined in 
+`./optional-components/database-external-ports/docker-compose-extra.yml`.
+A different set of ports can also be defined in a similar fashion using a custom `docker-compose-extra.yml` and 
+similarly adding its location to `EXTRA_CONF_DIRS`.
 
 
 ## Emu WPS service for testing
@@ -97,8 +116,8 @@ How to enable in `env.local` (a copy from
   `GENERIC_BIRD_POSTGRES_IMAGE` in `env.local` for further customizations.
   Default values are in [`generic_bird/default.env`](generic_bird/default.env).
 
-The WPS service will be available at `http://PAVICS_FQDN:GENERIC_BIRD_PORT/wps`
-or `https://PAVICS_FQDN_PUBLIC/TWITCHER_PROTECTED_PATH/GENERIC_BIRD_NAME` where
+The WPS service will be available at `http://<PAVICS_FQDN>:<GENERIC_BIRD_PORT>/wps`
+or `https://<PAVICS_FQDN_PUBLIC>/<TWITCHER_PROTECTED_PATH>/<GENERIC_BIRD_NAME>` where
 `PAVICS_FQDN`, `PAVICS_FQDN_PUBLIC` and `TWITCHER_PROTECTED_PATH` are defined
 in your `env.local`.
 
@@ -130,11 +149,29 @@ How to enable in `env.local` (a copy from
 
 The anonymous user will now have all the permissions described in [`./optional-components/all-public-access/all-public-access-magpie-permission.cfg`](all-public-access/all-public-access-magpie-permission.cfg).
 
-# Development
 
-When using templates files in optional components configuration files (such as a conf.extra-service.d/opnallll-component.conf)
-one must first explicitely add any environment variable they want to use in birdhouse/pavics-compose.sh in either VARS 
-or OPTIONAL_VARS.
+## Weaver 
 
-The variable names added to VARS will be checked against the resulting environment of env.local + any optional components
-environment files. Any variable added to VARS from an optional component must also be added to that component's default.env file.
+By enabling this component, the [Weaver](https://github.com/crim-ca/weaver) service will be integrated into the stack.
+This component offers `OGC-API - Processes` (a.k.a `WPS-REST bindings` and `WPS-T (Transactional)`) support. 
+This allows JSON interface with asynchronous WPS processes execution over remote instances. Other WPS of the stack 
+(`Emu`, `Flyingpigeon`, etc.) can also all be registered under `Weaver` in order to provide a common endpoint to 
+retrieve all available process, and dispatch their execution to the appropriate service. Finally, `Weaver` also adds
+`Docker` image as a WPS process capabilities, allowing deployment and execution of custom applications. 
+
+How to enable in `env.local` (a copy from
+[`env.local.example`](../env.local.example)):
+
+* Add `./optional-components/weaver` to `EXTRA_CONF_DIRS`.
+* Add any additional environment variable overrides as needed. 
+  Applicable variables are listed in [`./optional-components/weaver/default.env`](weaver/default.env).
+* (optional) Mount any additional `Weaver`-specific configuration files 
+  (see contents of [`./optional-components/weaver/config/weaver`](weaver/config/weaver)) 
+  if extended functionalities need to be defined. Further `docker-compose-extra.yml` could be needed to define
+  any other `volumes` entries where these component would need to be mounted to. 
+  
+For any specific details about `Weaver` configuration, functionalities or questions, please refer to its 
+[documentation](https://pavics-weaver.readthedocs.io/en/latest/).
+
+Once this component is enabled, `Weaver` will be accessible at `https://<PAVICS_FQDN_PUBLIC>/weaver` endpoint, where
+`PAVICS_FQDN_PUBLIC` is defined in your `env.local` file.
