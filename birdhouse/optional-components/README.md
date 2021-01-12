@@ -175,3 +175,17 @@ For any specific details about `Weaver` configuration, functionalities or questi
 
 Once this component is enabled, `Weaver` will be accessible at `https://<PAVICS_FQDN_PUBLIC>/weaver` endpoint, where
 `PAVICS_FQDN_PUBLIC` is defined in your `env.local` file.
+
+
+## WPS Health Checks
+
+By enabling this component, all WPS services will include and `healthcheck` definition to evaluate if corresponding 
+services respond to a basic `GetCapabilities` request at their respective endpoints.
+
+How to enable in `env.local` (a copy from
+[`env.local.example`](../env.local.example)):
+
+* Add `./optional-components/wps-healthchecks` to `EXTRA_CONF_DIRS`.
+
+Docker compose will now regularly run health check WPS requests to validate the services are responding.
+
