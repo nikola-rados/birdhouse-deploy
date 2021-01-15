@@ -150,33 +150,6 @@ How to enable in `env.local` (a copy from
 The anonymous user will now have all the permissions described in [`./optional-components/all-public-access/all-public-access-magpie-permission.cfg`](all-public-access/all-public-access-magpie-permission.cfg).
 
 
-## Weaver 
-
-By enabling this component, the [Weaver](https://github.com/crim-ca/weaver) service will be integrated into the stack.
-This component offers `OGC-API - Processes` (a.k.a `WPS-REST bindings` and `WPS-T (Transactional)`) support. 
-This allows JSON interface with asynchronous WPS processes execution over remote instances. Other WPS of the stack 
-(`Emu`, `Flyingpigeon`, etc.) can also all be registered under `Weaver` in order to provide a common endpoint to 
-retrieve all available process, and dispatch their execution to the appropriate service. Finally, `Weaver` also adds
-`Docker` image as a WPS process capabilities, allowing deployment and execution of custom applications. 
-
-How to enable in `env.local` (a copy from
-[`env.local.example`](../env.local.example)):
-
-* Add `./optional-components/weaver` to `EXTRA_CONF_DIRS`.
-* Add any additional environment variable overrides as needed. 
-  Applicable variables are listed in [`./optional-components/weaver/default.env`](weaver/default.env).
-* (optional) Mount any additional `Weaver`-specific configuration files 
-  (see contents of [`./optional-components/weaver/config/weaver`](weaver/config/weaver)) 
-  if extended functionalities need to be defined. Further `docker-compose-extra.yml` could be needed to define
-  any other `volumes` entries where these component would need to be mounted to. 
-  
-For any specific details about `Weaver` configuration, functionalities or questions, please refer to its 
-[documentation](https://pavics-weaver.readthedocs.io/en/latest/).
-
-Once this component is enabled, `Weaver` will be accessible at `https://<PAVICS_FQDN_PUBLIC>/weaver` endpoint, where
-`PAVICS_FQDN_PUBLIC` is defined in your `env.local` file.
-
-
 ## WPS Health Checks
 
 By enabling this component, all WPS services will include and `healthcheck` definition to evaluate if corresponding 
